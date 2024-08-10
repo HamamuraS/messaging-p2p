@@ -25,4 +25,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     //TODO: set allowed origins once released. Eg. setAllowedOrigins("http://localhost:3000")
     registry.addHandler(webSocketHandler, "/channels").setAllowedOrigins("*");
   }
+
+
 }
