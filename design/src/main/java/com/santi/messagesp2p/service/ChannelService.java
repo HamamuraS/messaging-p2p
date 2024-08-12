@@ -7,6 +7,7 @@ import com.santi.messagesp2p.exception.UnauthorizedException;
 import com.santi.messagesp2p.model.Channel;
 import com.santi.messagesp2p.model.Message;
 import com.santi.messagesp2p.model.Role;
+import com.santi.messagesp2p.model.Type;
 import com.santi.messagesp2p.model.User;
 import com.santi.messagesp2p.model.user_channel.UserChannel;
 import com.santi.messagesp2p.repository.ChannelRepository;
@@ -40,19 +41,39 @@ public class ChannelService {
   @Transactional
   public Channel  initializeChannel(ChannelDTO channelDTO) {
 
+    Channel newChannel = new Channel();
+    newChannel.setType(Type.valueOf(channelDTO.getType()));
+    channelRepository.save(newChannel);
+
+    try {
+      Type type = Type.valueOf(channelDTO.getType());
+      if (type == Type.GROUP) {
+        this.initializeGroup(channelDTO, newChannel);
+      }
+      else if (type == Type.CONTACT) {
+        this.initializeContact(channelDTO, newChannel);
+      }
+    }
+    catch (IllegalArgumentException e) {
+      throw new BadRequestException("Invalid channel type");
+    }
+
+    return newChannel;
+  }
+
+  private void initializeGroup(ChannelDTO channelDTO, Channel newChannel) {
+
     User creator = userService.getUserFromContext();
 
-    Channel newChannel = new Channel();
     if (channelDTO.getName() == null || channelDTO.getName().isEmpty()) {
-      throw new BadRequestException("Channel name cannot be null or empty");
+      throw new BadRequestException("Group name cannot be null or empty");
     }
     newChannel.setName(channelDTO.getName());
-    channelRepository.save(newChannel);
 
     this.registerParticipant(newChannel, creator, roleService.getAdminRole());
 
     if (channelDTO.getUsers().isEmpty()) {
-      throw new BadRequestException("A channel must have at least 2 users");
+      throw new BadRequestException("A group must have at least 2 users");
     }
     Set<User> participants = userService.findAllById(channelDTO.getUsers());
     if (participants.isEmpty()) {
@@ -62,7 +83,24 @@ public class ChannelService {
     Role defaultRole = roleService.getDefaultRole();
     this.addParticipants(participants, defaultRole, newChannel);
 
-    return newChannel;
+  }
+
+  private void initializeContact(ChannelDTO channelDTO, Channel newChannel) {
+
+    User creator = userService.getUserFromContext();
+
+    if (channelDTO.getUsers().size() != 1) {
+      throw new BadRequestException("A contact must have exactly 1 user");
+    }
+
+    Long contactId = channelDTO.getUsers().stream().findFirst().get();
+
+    User contact = userService.findById(contactId).orElseThrow(
+        () -> new NotFoundException("Contact not found")
+    );
+
+    this.addParticipants(Set.of(creator, contact), roleService.getAdminRole(), newChannel);
+
   }
 
   @Transactional
@@ -85,6 +123,9 @@ public class ChannelService {
   @Transactional
   public Channel removeUserFromChannel(Long channelId, Long userId) {
     Channel channel = this.getChannel(channelId);
+    if (channel.getType() == Type.CONTACT) {
+      throw new BadRequestException("Cannot remove users from contact channels");
+    }
     this.validateAdminPermissions(channel);
     // finding user to be deleted
     User user = userService.findById(userId).orElseThrow(

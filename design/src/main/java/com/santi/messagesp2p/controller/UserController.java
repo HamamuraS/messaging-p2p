@@ -78,7 +78,9 @@ public class UserController {
     Pageable pageable = PageRequest.of(page, size, Sort.by("channelId"));
     Page<Channel> channels = userChannelService.getChannelsByUser(userId, pageable);
     logger.info("Channels for user {} found", userId);
-    Page<ChannelDTO> channelDTOS = channels.map(Channel::toDTO);
+    Page<ChannelDTO> channelDTOS = channels.map(
+        channel -> channel.toDTO(userService.getUserFromContext())
+    );
     return ResponseEntity.ok(channelDTOS);
   }
 }

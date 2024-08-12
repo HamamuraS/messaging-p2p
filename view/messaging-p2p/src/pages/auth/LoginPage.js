@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './LoginPage.css';
+import './Forms.css';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage({handleLogin}) {
@@ -16,11 +16,12 @@ function LoginPage({handleLogin}) {
             setErrorMessage('Invalid credentials. Please try again.');
             return;
         }
+        navigate('/channels');
     };
     
     return (
-        <div className="login-container">
-        <form className="login-form" onSubmit={handleSubmit}>
+        <div className="form-page-container">
+        <form className="form" onSubmit={handleSubmit}>
             <h2>Login</h2>
             <div className="form-group">
             <label htmlFor="username">Username or Email:</label>
@@ -31,7 +32,7 @@ function LoginPage({handleLogin}) {
                 onChange={
                     (e) => {
                         setUsername(e.target.value);
-                        setErrorMessage('');
+                        errorMessage && setErrorMessage('');
                     }
                 }
                 required
@@ -45,16 +46,16 @@ function LoginPage({handleLogin}) {
                 value={password}
                 onChange={
                     (e) => {
-                        setPassword(e.target.value)
-                        setErrorMessage('');
+                        setPassword(e.target.value);
+                        errorMessage && setErrorMessage('');
                     }
                 }
                 required
             />
             </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <button type="submit" className="login-button">Login</button>
-            <p className="register-link">
+            <button type="submit" className="submit-button">Login</button>
+            <p className="extern-link">
                 Don't have an account? <a href="/register">Register here</a>
             </p>
         </form>

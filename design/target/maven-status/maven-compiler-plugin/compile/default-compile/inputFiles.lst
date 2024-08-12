@@ -25,6 +25,7 @@
 /home/santi/Escritorio/Stuff/Java/messaging-p2p/design/src/main/java/com/santi/messagesp2p/model/Channel.java
 /home/santi/Escritorio/Stuff/Java/messaging-p2p/design/src/main/java/com/santi/messagesp2p/model/Message.java
 /home/santi/Escritorio/Stuff/Java/messaging-p2p/design/src/main/java/com/santi/messagesp2p/model/Role.java
+/home/santi/Escritorio/Stuff/Java/messaging-p2p/design/src/main/java/com/santi/messagesp2p/model/Type.java
 /home/santi/Escritorio/Stuff/Java/messaging-p2p/design/src/main/java/com/santi/messagesp2p/model/User.java
 /home/santi/Escritorio/Stuff/Java/messaging-p2p/design/src/main/java/com/santi/messagesp2p/model/user_channel/UserChannel.java
 /home/santi/Escritorio/Stuff/Java/messaging-p2p/design/src/main/java/com/santi/messagesp2p/model/user_channel/UserChannelId.java

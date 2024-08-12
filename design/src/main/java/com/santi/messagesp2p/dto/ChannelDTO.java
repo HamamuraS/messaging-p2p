@@ -12,6 +12,7 @@ public class ChannelDTO {
 
   private Long id;
   private String name;
+  private String type;
   private Set<Long> users = new HashSet<>();
 
   public ChannelDTO() {

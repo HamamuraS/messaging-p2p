@@ -3,11 +3,13 @@ package com.santi.messagesp2p.controller;
 import com.santi.messagesp2p.dto.ChannelDTO;
 import com.santi.messagesp2p.dto.MessageDTO;
 import com.santi.messagesp2p.dto.UserChannelDTO;
+import com.santi.messagesp2p.exception.BadRequestException;
 import com.santi.messagesp2p.model.Channel;
 import com.santi.messagesp2p.model.Message;
 import com.santi.messagesp2p.model.User;
 import com.santi.messagesp2p.model.user_channel.UserChannel;
 import com.santi.messagesp2p.service.ChannelService;
+import com.santi.messagesp2p.service.UserService;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,17 +38,26 @@ public class ChannelController {
 
   @Autowired
   private ChannelService channelService;
+  @Autowired
+  private UserService userService;
 
   @PostMapping
   public ResponseEntity<?> createChannel(@RequestBody ChannelDTO channelDTO) {
-    logger.info("Received petition to create channel {}", channelDTO.getName());
+    if (channelDTO.getType() == null || channelDTO.getType().isEmpty()) {
+      throw new BadRequestException("Must provide a channel type.");
+    }
+    logger.info("Received petition to create channel of type {}", channelDTO.getType());
     Channel newChannel = channelService.initializeChannel(channelDTO);
     logger.info("Channel {} created", newChannel.getId());
-    return new ResponseEntity<>(getChannelDTO(newChannel), HttpStatus.CREATED);
+    return new ResponseEntity<>(
+        newChannel.toDTO(userService.getUserFromContext()),
+        HttpStatus.CREATED
+    );
   }
 
   @DeleteMapping("/{channelId}")
   public ResponseEntity<?> deleteChannel(@PathVariable Long channelId) {
+    // DANGEROUS OPERATION WHEN COMES TO CONTACT CHANNELS
     logger.info("Received petition to delete channel {}", channelId);
     channelService.deleteChannel(channelId);
     logger.info("Channel {} deleted", channelId);
@@ -58,7 +69,7 @@ public class ChannelController {
     logger.info("Requested channel {}", channelId);
     Channel channel = channelService.getChannel(channelId);
     logger.info("Channel {} found", channelId);
-    return ResponseEntity.ok(getChannelDTO(channel));
+    return ResponseEntity.ok(channel.toDTO(userService.getUserFromContext()));
   }
 
   @DeleteMapping("/{channelId}/users/{userId}")
@@ -69,7 +80,7 @@ public class ChannelController {
     logger.info("Received petition to remove user {} from channel {}", userId, channelId);
     Channel channel = channelService.removeUserFromChannel(channelId, userId);
     logger.info("User {} removed from channel {}", userId, channel.getId());
-    return ResponseEntity.ok(getChannelDTO(channel));
+    return ResponseEntity.ok(channel.toDTO());
   }
 
   @PostMapping("/{channelId}/users/{userId}")
@@ -80,7 +91,7 @@ public class ChannelController {
     logger.info("Received petition to add user {} to channel {}", userId, channelId);
     Channel updatedChannel = channelService.addUserToChannel(channelId, userId);
     logger.info("User {} added to channel {}", userId, channelId);
-    return ResponseEntity.ok(getChannelDTO(updatedChannel));
+    return ResponseEntity.ok(updatedChannel.toDTO());
   }
 
   @PutMapping("/{channelId}/users/{userId}/role/{roleName}")
@@ -109,18 +120,6 @@ public class ChannelController {
     Page<MessageDTO> messageDTOS = messages.map(Message::toDTO);
     logger.info("Messages for channel {} found", channelId);
     return ResponseEntity.ok(messageDTOS);
-  }
-
-
-  private ChannelDTO getChannelDTO(Channel channel) {
-    ChannelDTO channelDTO = new ChannelDTO();
-    channelDTO.setId(channel.getId());
-    channelDTO.setName(channel.getName());
-    Set<User> users = channel.getUsers();
-    for (User user : users) {
-      channelDTO.getUsers().add(user.getId());
-    }
-    return channelDTO;
   }
 
   private UserChannelDTO getUserChannelDTO(UserChannel userChannel) {
