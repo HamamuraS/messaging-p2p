@@ -72,6 +72,7 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<?> createAuthenticatedToken(@RequestBody AuthRequest authRequest) {
+    logger.info("Received auth petition of {}", authRequest.getIdentifier());
     User user;
     try {
       // Check if user exists. Identifier may be username or email.

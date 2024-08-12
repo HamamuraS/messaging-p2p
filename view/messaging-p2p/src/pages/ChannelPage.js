@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import './ChannelPage.css';
 
 function ChannelPage({ onChannelSelect }) {
     
@@ -9,8 +10,18 @@ function ChannelPage({ onChannelSelect }) {
         const fetchChannels = async () => {
           try {
             const userId = localStorage.getItem('id');
-            const response = await fetch('http://localhost:8080/api/users/'+userId+'/channels'); // Cambia la URL por la de tu API
-    
+            const token = localStorage.getItem('token');
+            const response = await fetch(
+                'http://localhost:8080/api/users/'+userId+'/channels',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
             const data = await response.json();
             setChannels(data.content);
  
@@ -46,6 +57,20 @@ function ChannelPage({ onChannelSelect }) {
                 <div className="chat-messages">
                   <p>Chat messages would go here...</p>
                 </div>
+                <div className="chat-input-container">
+                <textarea
+                    placeholder="Type your message..."
+                    className="chat-input"
+                    rows={1}
+                    onInput={(e) => {
+                        e.target.style.height = 'auto';
+                        const scrollHeight = e.target.scrollHeight;
+                        e.target.style.height = `${Math.min(scrollHeight, 150)}px`;
+                        e.target.style.overflowY = scrollHeight > 150 ? 'auto' : 'hidden';
+                    }}
+                ></textarea>
+                <button className="send-button">Send</button>
+            </div>
               </>
             ) : (
               <p>Select a channel to start chatting</p>
