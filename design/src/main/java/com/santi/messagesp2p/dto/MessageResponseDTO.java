@@ -10,7 +10,7 @@ import lombok.Setter;
 public class MessageResponseDTO {
 
   private Long id;
-  private User sender;
+  private String sender;
   private Long channel;
   private String content;
   private LocalDateTime timestamp;

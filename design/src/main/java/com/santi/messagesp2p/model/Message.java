@@ -40,10 +40,12 @@ public class Message {
 
   public MessageDTO toDTO() {
     MessageDTO messageDTO = new MessageDTO();
-    messageDTO.setSender(this.sender.getId());
+    messageDTO.setSender(this.sender.getUsername());
     messageDTO.setChannel(this.channel.getId());
     messageDTO.setContent(this.content);
     messageDTO.setTimestamp(this.timestamp);
+    messageDTO.setSenderId(this.sender.getId());
+    messageDTO.setMessageId(this.id);
     return messageDTO;
   }
 

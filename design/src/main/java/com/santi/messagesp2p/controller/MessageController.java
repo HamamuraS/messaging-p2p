@@ -2,7 +2,6 @@ package com.santi.messagesp2p.controller;
 
 
 import com.santi.messagesp2p.dto.MessageDTO;
-import com.santi.messagesp2p.dto.MessageResponseDTO;
 import com.santi.messagesp2p.exception.BadRequestException;
 import com.santi.messagesp2p.model.Channel;
 import com.santi.messagesp2p.model.Message;
@@ -66,23 +65,7 @@ public class MessageController {
 
     messageService.saveMessage(message);
 
-    return new ResponseEntity<>(convertToDto(messageService.saveMessage(message)), HttpStatus.CREATED);
-  }
-
-  @GetMapping
-  public List<Message> getMessages(@RequestParam Long channelId) {
-      logger.info("Recibida petición de mensajes del canal {}", channelId);
-    return messageService.getMessages(channelId);
-  }
-
-  public MessageResponseDTO convertToDto(Message message) {
-    MessageResponseDTO messageDto = new MessageResponseDTO();
-    messageDto.setId(message.getId());
-    messageDto.setSender(message.getSender());
-    messageDto.setChannel(message.getChannel().getId());
-    messageDto.setContent(message.getContent());
-    messageDto.setTimestamp(message.getTimestamp());
-    return messageDto;
+    return new ResponseEntity<>(messageService.saveMessage(message).toDTO(), HttpStatus.CREATED);
   }
 
 }

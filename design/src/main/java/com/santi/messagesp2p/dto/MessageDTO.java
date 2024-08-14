@@ -8,7 +8,9 @@ import lombok.Setter;
 @Getter
 public class MessageDTO {
 
-  private Long sender;
+  private Long messageId;
+  private Long senderId;
+  private String sender;
   private Long channel;
   private String content;
   private LocalDateTime timestamp;

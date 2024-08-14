@@ -5,7 +5,6 @@ import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-d
 import { handleLogin } from './components/LoginHandler';
 import { handleRegister } from './components/RegisterHandler';
 import ChannelPage from './pages/ChannelPage';
-import { handleChannelSelection } from './components/ChannelDisplayHandler';
 
 function App() {
   return (
@@ -13,7 +12,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage handleLogin={handleLogin}/>} />
         <Route path="/register" element={<RegisterPage handleRegister={handleRegister} />} />
-        <Route path="/channels" element={<ChannelPage onChannelSelect={handleChannelSelection}/>} />
+        <Route path="/channels" element={<ChannelPage/>} />
         {/* Other routes */}
         
         <Route path="*" element={<Navigate to="/login" />} />
