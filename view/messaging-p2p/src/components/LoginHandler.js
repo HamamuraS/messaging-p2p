@@ -35,6 +35,7 @@ export const handleLogin = async ({ identifier, password }) => {
 const login = async (credentials) => {
   try {
     const response = await fetch(`${API_URL}/api/auth/login`, {
+      
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

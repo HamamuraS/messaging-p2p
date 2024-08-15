@@ -1,14 +1,14 @@
 
 const dev = {
-    API_URL: 'http://192.168.1.59:8080',
+    API_URL: 'http://192.168.1.100:8080',
   };
   
   const prod = {
-    API_URL: 'https://api.tudominio.com',
+    API_URL: 'https://api.midominio.com',
   };
   
   const staging = {
-    API_URL: 'https://staging-api.tudominio.com',
+    API_URL: 'https://staging-api.midominio.com',
   };
   
   const config = process.env.REACT_APP_STAGE === 'production'
@@ -17,8 +17,10 @@ const dev = {
       ? staging
       : dev;
   
-  export default {
+  const exportedConfig = {
     ...config,
   };
-  
-  export const API_URL = config.API_URL;
+      
+export default exportedConfig;
+
+export const API_URL = config.API_URL;
