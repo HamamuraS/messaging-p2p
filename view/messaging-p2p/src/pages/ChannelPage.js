@@ -10,7 +10,7 @@ function ChannelPage() {
   
   return (
     <div className="channels-page">
-      <ChannelsList 
+      <ChannelsList
         activeChannel={activeChannel}
         setActiveChannel={setActiveChannel}
       />

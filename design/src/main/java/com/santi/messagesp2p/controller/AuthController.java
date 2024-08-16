@@ -16,8 +16,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,6 +48,17 @@ public class AuthController {
     this.passwordEncoder = passwordEncoder;
     this.jwtTokenProvider = jwtTokenProvider;
     this.authenticationManager = authenticationManager;
+  }
+
+  @GetMapping("/validate")
+  public ResponseEntity<Void> validateToken(@RequestHeader("Authorization") String token) {
+    if (token != null && token.startsWith("Bearer ")) {
+      token = token.substring(7);
+      if (jwtTokenProvider.validateToken(token)) {
+        return ResponseEntity.ok().build();
+      }
+    }
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
   }
 
   @PostMapping("/register")

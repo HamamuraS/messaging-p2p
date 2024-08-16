@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     //TODO: set allowed origins once released. Eg. setAllowedOrigins("http://localhost:3000")
-    registry.addHandler(webSocketHandler, "/channels").setAllowedOrigins("*");
+    //registry.addHandler(webSocketHandler, "/channels").setAllowedOrigins("*");
   }
 
 

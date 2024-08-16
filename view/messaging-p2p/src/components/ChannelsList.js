@@ -16,23 +16,24 @@ function ChannelsList({
     useEffect(() => {
         const fetchChannels = async () => {
             try {
-                const userId = localStorage.getItem('id');
-                const token = localStorage.getItem('token');
-                const response = await fetch(
-                    `${API_URL}/api/users/${userId}/channels`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
-        
-                const data = await response.json();
-                setChannels(data.content);
+              console.log('fetching channels');
+              const userId = localStorage.getItem('id');
+              const token = localStorage.getItem('token');
+              const response = await fetch(
+                  `${API_URL}/api/users/${userId}/channels`,
+                  {
+                      method: 'GET',
+                      headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json'
+                      }
+                  }
+              );
+      
+              const data = await response.json();
+              setChannels(data.content);
             } catch (error) {
-                console.error('Error fetching channels:', error);
+              console.error('Error fetching channels:', error);
             }
         };
 
