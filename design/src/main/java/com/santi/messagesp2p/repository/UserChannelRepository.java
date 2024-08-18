@@ -5,6 +5,7 @@ import com.santi.messagesp2p.model.User;
 import com.santi.messagesp2p.model.user_channel.UserChannel;
 import com.santi.messagesp2p.model.user_channel.UserChannelId;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,5 +20,7 @@ public interface UserChannelRepository extends JpaRepository<UserChannel, UserCh
   Optional<UserChannel> findByChannelIdAndUserId(Long channelId, Long userId);
 
   Page<UserChannel> findByUserId(Long userId, Pageable pageable);
+
+  Set<UserChannel> findAllByUserId(Long userId);
 
 }

@@ -63,9 +63,7 @@ public class MessageController {
         message.getSender().getUsername(),
         message.getContent());
 
-    messageService.saveMessage(message);
-
-    return new ResponseEntity<>(messageService.saveMessage(message).toDTO(), HttpStatus.CREATED);
+    return new ResponseEntity<>(messageService.saveAndShareMessage(message).toDTO(), HttpStatus.CREATED);
   }
 
 }

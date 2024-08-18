@@ -70,6 +70,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authz -> authz
             //.requestMatchers("/api/users").permitAll()  // Permite todas las solicitudes a /api/users sin autenticación
             .requestMatchers("/api/auth/*").permitAll()
+            .requestMatchers("/ws/**").permitAll()
             .anyRequest().authenticated()     // Todas las demás solicitudes requieren autenticación
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

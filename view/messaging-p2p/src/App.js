@@ -6,6 +6,7 @@ import { handleLogin } from './components/LoginHandler';
 import { handleRegister } from './components/RegisterHandler';
 import ChannelPage from './pages/ChannelPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (

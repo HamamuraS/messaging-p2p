@@ -3,11 +3,12 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { API_URL } from '../utils/config';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from 'axios';
+import { IoIosPaperPlane } from 'react-icons/io';
 
-function ChatContainer({activeChannel}) {
+function ChatContainer({activeChannel, messages, setMessages}) {
     
     const [newMessage, setNewMessage] = useState('');
-    const [messages, setMessages] = useState([]);
+    
     const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const [nextPage, setNextPage] = useState(0);
     
@@ -131,11 +132,11 @@ function ChatContainer({activeChannel}) {
                 console.log('Error:', err.response ? err.response.data : err.message);
             });
         }
-    }, [activeChannel]);
+    }, [activeChannel, setMessages]);
     
     
     return (
-        <div className="chat-container">
+        <div className="chat-container border">
         {activeChannel ? (
         <>
             <h2>{activeChannel.name}</h2>
@@ -162,7 +163,7 @@ function ChatContainer({activeChannel}) {
             <div className="chat-input-container">
             <textarea
                 placeholder="Type your message..."
-                className="chat-input"
+                className="form-control me-2 "
                 rows={1}
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
@@ -179,7 +180,7 @@ function ChatContainer({activeChannel}) {
                 }
                 }}
             />
-            <button className="send-button" onClick={handleSendMessage}>Send</button>
+            <button className="btn btn-dark" onClick={handleSendMessage}><IoIosPaperPlane/></button>
             </div>
         </>
         ) : (

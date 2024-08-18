@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { API_URL } from "../utils/config";
+import UserBar from "./UserBar";
+import { IoIosAdd } from "react-icons/io";
 
 function ChannelsList({ 
     activeChannel,
@@ -41,24 +43,29 @@ function ChannelsList({
     }, []);
     
     return (
-        <div className="channels-list">
-        {channels.map((channel) => (
-          <div
-            key={channel.id}
-            className={`channel-item ${channel.id === activeChannel?.id ? 'active' : ''}`}
-            onClick={() => handleChannelSelect(channel)}
-          >
-            {channel.name} ({channel.type})
-          </div>
-        ))}
-        <div className="channels-tools">
+        <div className="d-flex flex-column h-100 border-right">
+          
+        <UserBar />
+        
+        <div className="flex-grow-1 overflow-auto bg-light">
+          {channels.map((channel) => (
+            <div
+              key={channel.id}
+              className={`channel-item ${channel.id === activeChannel?.id ? 'active' : ''}`}
+              onClick={() => handleChannelSelect(channel)}
+            >
+              {channel.name} ({channel.type})
+            </div>
+          ))}
+        </div>
+        
+        <div className="d-flex align-items-center p-2 bg-light border-top">
           <input
             type="text"
-            placeholder="Search users..."
-            className="search-input"
+            placeholder="Type username or email..."
+            className="form-control me-2"
           />
-          <button className="add-button">Add Channel</button>
-          <button className="settings-button">Settings</button>
+          <button className="btn btn-dark"><IoIosAdd/></button>
         </div>
       </div>
     );

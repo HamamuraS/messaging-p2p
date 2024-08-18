@@ -6,7 +6,7 @@
   --text-color: #333;
   --tools-bg-color: #f0f0f0;
   --user-message-bg: #c9e2fd;
-  --other-message-bg: #f2f2f2;
+  --other-message-bg: #dcd8d8;
 }
 
 * {
@@ -25,15 +25,7 @@ body {
   flex-direction: column;
 }
 
-.channels-list {
-  width: 100%;
-  background-color: var(--bg-color);
-  padding: 1rem;
-  overflow-y: auto;
-  max-height: calc(30vh - 50px);
-  display: flex;
-  flex-direction: column;
-}
+
 
 .chat-container {
   width: 100%;
@@ -45,9 +37,9 @@ body {
   flex-grow: 1;
 }
 
+
 .channel-item {
   padding: 0.75rem;
-  margin-bottom: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s;
   border-top: 1px solid var(--border-color);
@@ -94,14 +86,7 @@ body {
   background-color: var(--hover-color);
 }
 
-.channels-tools {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.75rem;
-  border-top: 1px solid var(--border-color);
-  background-color: var(--tools-bg-color);
-  width: 100%;
-}
+
 
 .search-input {
   flex: 1;
@@ -112,20 +97,16 @@ body {
   font-size: 0.875rem;
 }
 
-.add-button, .settings-button {
-  padding: 0.5rem 0.75rem;
-  border: none;
-  border-radius: 0.25rem;
-  background-color: var(--primary-color);
-  color: white;
-  cursor: pointer;
-  margin-left: 0.5rem;
-  font-size: 0.875rem;
-  transition: background-color 0.3s;
-}
 
 .add-button:hover, .settings-button:hover {
   background-color: var(--hover-color);
+}
+
+.user-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -133,21 +114,13 @@ body {
     flex-direction: row;
   }
 
-  .channels-list {
-    width: 30%;
-    max-height: none;
-    position: relative;
-  }
+
 
   .chat-container {
     width: 70%;
   }
 
-  .channels-tools {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-  }
+
 }
 
 @media (max-width: 480px) {
@@ -169,9 +142,7 @@ body {
     padding: 0.5rem 0.75rem;
   }
 
-  .channels-tools {
-    flex-wrap: wrap;
-  }
+
 
   .search-input {
     width: 100%;

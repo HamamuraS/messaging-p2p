@@ -1,11 +1,13 @@
 package com.santi.messagesp2p.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageDTO {
 
   private Long messageId;

@@ -1,5 +1,6 @@
 package com.santi.messagesp2p.service;
 
+import com.santi.messagesp2p.controller.WebSocketHandler;
 import com.santi.messagesp2p.dto.ChannelDTO;
 import com.santi.messagesp2p.exception.BadRequestException;
 import com.santi.messagesp2p.exception.NotFoundException;
@@ -31,11 +32,15 @@ public class ChannelService {
   private UserChannelService userChannelService;
   @Autowired
   private MessageService messageService;
+  @Autowired
+  private WebSocketHandler webSocketHandler;
 
   public ChannelService(
-      ChannelRepository channelRepository
+      ChannelRepository channelRepository,
+      WebSocketHandler webSocketHandler
   ) {
     this.channelRepository = channelRepository;
+    this.webSocketHandler = webSocketHandler;
   }
 
   @Transactional
@@ -114,6 +119,7 @@ public class ChannelService {
     UserChannel userChannel = userChannelService.createUserChannel(channel, user, role);
     user.addChannel(userChannel);
     channel.addParticipant(userChannel);
+    webSocketHandler.handleUserInNewChannel(user.getId(), channel.getId());
   }
 
   private void addParticipants(Set<User> users, Role defaultRole, Channel channel) {

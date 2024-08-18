@@ -10,6 +10,7 @@ import com.santi.messagesp2p.model.User;
 import com.santi.messagesp2p.model.user_channel.UserChannel;
 import com.santi.messagesp2p.service.ChannelService;
 import com.santi.messagesp2p.service.UserService;
+import java.time.LocalDateTime;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +113,8 @@ public class ChannelController {
   public ResponseEntity<?> getMessagesByChannel(
       @PathVariable Long channelId,
       @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "20") int size
+      @RequestParam(defaultValue = "20") int size,
+      @RequestParam() LocalDateTime lastLoadedTimestamp
   ) {
     logger.info("Requested messages for channel {} with pagination, page: {}, size: {}", channelId, page, size);
     Pageable pageable = PageRequest.of(page, size, Sort.by("timestamp").descending());

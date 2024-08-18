@@ -7,6 +7,7 @@ import com.santi.messagesp2p.model.User;
 import com.santi.messagesp2p.model.user_channel.UserChannel;
 import com.santi.messagesp2p.model.user_channel.UserChannelId;
 import com.santi.messagesp2p.repository.UserChannelRepository;
+import java.util.Set;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,6 +51,13 @@ public class UserChannelService {
 
   public Page<Channel> getChannelsByUser(Long userId, Pageable pageable) {
     return userChannelRepository.findByUserId(userId, pageable).map(UserChannel::getChannel);
+  }
+
+  public Set<Channel> getChannelsByUser(Long userId) {
+    return userChannelRepository
+        .findAllByUserId(userId)
+        .stream().map(UserChannel::getChannel)
+        .collect(java.util.stream.Collectors.toSet());
   }
 
 

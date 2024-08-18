@@ -67,6 +67,7 @@ public class UserService implements UserDetailsService {
     return userRepository.findByUsernameOrEmail(username, email);
   }
 
+
   // Used by JwtAuthenticationFilter which needs a UserDetailsService.
   // NOTE: This class implements UserDetailsService and User implements UserDetails
   @Override
