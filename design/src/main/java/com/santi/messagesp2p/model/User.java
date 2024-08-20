@@ -1,6 +1,7 @@
 package com.santi.messagesp2p.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.santi.messagesp2p.model.notification.FriendshipRequest;
 import com.santi.messagesp2p.model.user_channel.UserChannel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -56,6 +57,14 @@ public class User implements UserDetails {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonIgnore
   private final Set<UserChannel> userChannels = new HashSet<>();
+
+  @OneToMany(mappedBy = "sender")
+  @JsonIgnore
+  private final Set<FriendshipRequest> sentFriendshipRequests = new HashSet<>();
+
+  @OneToMany(mappedBy = "receiver")
+  @JsonIgnore
+  private final Set<FriendshipRequest> receivedFriendshipRequests = new HashSet<>();
 
   public User() {
   }

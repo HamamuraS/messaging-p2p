@@ -16,6 +16,7 @@ public class MessageDTO {
   private Long channel;
   private String content;
   private LocalDateTime timestamp;
+  private String messageType = "MESSAGE"; // MESSAGE, FRIENDSHIP_REQUEST
 
 }
 

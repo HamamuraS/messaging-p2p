@@ -112,13 +112,21 @@ public class ChannelController {
   @GetMapping("/{channelId}/messages")
   public ResponseEntity<?> getMessagesByChannel(
       @PathVariable Long channelId,
-      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "false") Boolean getFirst,
       @RequestParam(defaultValue = "20") int size,
-      @RequestParam() LocalDateTime lastLoadedTimestamp
+      @RequestParam(required = false) LocalDateTime lastLoadedTimestamp
   ) {
-    logger.info("Requested messages for channel {} with pagination, page: {}, size: {}", channelId, page, size);
-    Pageable pageable = PageRequest.of(page, size, Sort.by("timestamp").descending());
-    Page<Message> messages = channelService.getMessagesByChannel(channelId, pageable);
+    Pageable pageable = PageRequest.of(0, size, Sort.by("timestamp").descending());
+    Page<Message> messages;
+    if (getFirst) {
+      messages = channelService.getMessagesByChannel(channelId, pageable);
+    }else {
+      if (lastLoadedTimestamp == null) {
+        throw new BadRequestException("Must provide a timestamp to load messages");
+      }
+      messages = channelService.getMessagesByChannel(channelId, lastLoadedTimestamp, pageable);
+    }
+
     Page<MessageDTO> messageDTOS = messages.map(Message::toDTO);
     logger.info("Messages for channel {} found", channelId);
     return ResponseEntity.ok(messageDTOS);

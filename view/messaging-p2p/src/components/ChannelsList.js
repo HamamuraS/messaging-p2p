@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { API_URL } from "../utils/config";
-import UserBar from "./UserBar";
-import { IoIosAdd } from "react-icons/io";
 
 function ChannelsList({ 
     activeChannel,
@@ -9,6 +7,7 @@ function ChannelsList({
 }) {
     
     const [channels, setChannels] = useState([]);
+
     
     const handleChannelSelect = (channel) => {
         setActiveChannel(channel);
@@ -42,32 +41,30 @@ function ChannelsList({
         fetchChannels();
     }, []);
     
+
+    
     return (
-        <div className="d-flex flex-column h-100 border-right">
           
-        <UserBar />
-        
-        <div className="flex-grow-1 overflow-auto bg-light">
+        <div className="list-group-flush border-bottom scrollarea" style={{width: '380px'}}>
           {channels.map((channel) => (
             <div
               key={channel.id}
-              className={`channel-item ${channel.id === activeChannel?.id ? 'active' : ''}`}
+              
+              className={`channel-item ${channel.id === activeChannel?.id ? 'active' : ''} `}
               onClick={() => handleChannelSelect(channel)}
             >
-              {channel.name} ({channel.type})
+              <div className="d-flex w-100 align-items-center justify-content-between">
+                <strong className="mb-1">{channel.name}</strong>
+                <small>date here</small>
+              </div>
+              <div className="col-10 mb-1 small">
+                last message goes here
+              </div>
             </div>
+
           ))}
         </div>
         
-        <div className="d-flex align-items-center p-2 bg-light border-top">
-          <input
-            type="text"
-            placeholder="Type username or email..."
-            className="form-control me-2"
-          />
-          <button className="btn btn-dark"><IoIosAdd/></button>
-        </div>
-      </div>
     );
     
     

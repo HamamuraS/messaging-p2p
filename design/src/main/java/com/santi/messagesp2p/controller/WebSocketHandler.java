@@ -1,6 +1,7 @@
 package com.santi.messagesp2p.controller;
 
 
+import com.santi.messagesp2p.model.notification.FriendshipRequest;
 import com.santi.messagesp2p.service.UserChannelService;
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,10 +44,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
     logger.info("Received socket petition of user {}", userId);
 
     session.getAttributes().put("userId", userId);
+    session.getAttributes().put("removable", false);
 
     if (userSessions.containsKey(userId)) {
-      logger.info("User {} is already connected, rejecting new connection", userId);
       try {
+        session.getAttributes().put("removable", true);
         session.close();
       } catch (IOException e) {
         logger.error("Failed to close the session for user {}", userId, e);
@@ -64,6 +66,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
   @Override
   public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull org.springframework.web.socket.CloseStatus status) {
+    if ((boolean)session.getAttributes().get("removable")) {
+      logger.info("User {} was already connected, rejecting new connection", getUserIdFromSession(session));
+      return;
+    }
+
     Long userId = getUserIdFromSession(session);
 
     userChannelService.getChannelsByUser(userId).forEach(channel -> {
@@ -90,6 +97,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
   }
 
+  public void sendMessage(Long userId, String message) throws IOException {
+    WebSocketSession session = userSessions.get(userId);
+    if (session != null) {
+      session.sendMessage(new TextMessage(message));
+    }
+  }
+
   public void handleUserInNewChannel(Long userId, Long channelId) {
     WebSocketSession session = userSessions.get(userId);
     if (session != null) {
@@ -113,6 +127,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
       }
     }
   }
+
 
   private Long getUserIdFromSession(WebSocketSession session) {
     return (Long) session.getAttributes().get("userId");

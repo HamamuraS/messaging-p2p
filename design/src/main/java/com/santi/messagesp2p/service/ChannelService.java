@@ -13,6 +13,7 @@ import com.santi.messagesp2p.model.User;
 import com.santi.messagesp2p.model.user_channel.UserChannel;
 import com.santi.messagesp2p.repository.ChannelRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -177,6 +178,10 @@ public class ChannelService {
     Role role = roleService.getRoleByName(roleName);
     userChannel.setRole(role);
     return userChannel;
+  }
+
+  public Page<Message> getMessagesByChannel(Long channelId, LocalDateTime lastLoadedTimestamp, Pageable pageable) {
+    return messageService.getMessages(channelId, lastLoadedTimestamp, pageable);
   }
 
   public Page<Message> getMessagesByChannel(Long channelId, Pageable pageable) {

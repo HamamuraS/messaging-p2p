@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.7",
+    "@mui/material": "^5.16.7",
     "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -15,7 +19,10 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^6.26.0",
     "react-scripts": "5.0.1",
+    "react-settings-pane": "^0.1.5",
+    "react-toastify": "^10.0.5",
     "sockjs-client": "^1.6.1",
+    "sweetalert2": "^11.12.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

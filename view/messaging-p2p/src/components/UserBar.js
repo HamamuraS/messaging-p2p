@@ -1,21 +1,56 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import { FiUser } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { FiLogOut, FiSettings, FiBell, FiUser } from 'react-icons/fi';
+import { FiLogOut } from 'react-icons/fi';
+import FindPeoplePane from './FindPeoplePane';
+import NotificationsPane from './NotificationsPane';
+import { Badge } from '@mui/material';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import AddIcon from '@mui/icons-material/Add';
+import getPendingsNotifications from '../utils/getPendingNotifications';
 
-const UserBar = () => {
-  const navigate = useNavigate();
+const UserBar = ({notifications, setNotifications}) => {
   const username = localStorage.getItem('username');
+  const navigate = useNavigate();
+  const [showFindPeoplePane, setShowFindPeoplePane] = useState(false);
+  const [showNotificationsPane, setShowNotificationsPane] = useState(false);
 
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
     navigate('/login');
   };
+  
+  const handleFindPeople = () => {
+    setShowFindPeoplePane(true);
+  };
+  
+  const handleDisplayNotifications = () => {
+    setShowNotificationsPane(true);
+  };
+  
+  
+  useEffect(() => {
 
+    const fetchNotifications = async () => {
+      //gets notifications that still have not been accepted or rejected
+      const pendingNotifications = await getPendingsNotifications();
+      setNotifications(pendingNotifications);
+      if (pendingNotifications.length > 0) {
+        //notify user
+        console.log('User has pending notifications!');
+        console.log('example notification:', pendingNotifications[0]);
+      } 
+    };
+    
+    fetchNotifications();
+    
+  }, []);
+  
   return (
-    <div className="bg-dark text-light py-2 px-3 d-flex justify-content-between align-items-center">
+    <div className="d-flex text-light bg-dark justify-content-between align-items-center flex-shrink-0 p-3 border-bottom">
         
-        {/* Foto de perfil y nombre de usuario */}
         <div className="d-flex align-items-center">
           <div className="profile-photo-placeholder me-3">
             <div
@@ -34,16 +69,29 @@ const UserBar = () => {
         </div>
 
         <div className="user-actions d-flex">
-          <button className="btn btn-dark me-2" title="Notifications">
-            <FiBell />
+          <button className="btn btn-dark" title="Notifications"
+          onClick={handleDisplayNotifications}>
+          <Badge badgeContent={notifications.length} color="primary">  
+            <NotificationsNoneIcon />
+          </Badge>
           </button>
-          <button className="btn btn-dark me-2" title="Settings">
-            <FiSettings />
+          <button 
+            className="btn btn-dark" title="Find people"
+            onClick={handleFindPeople}>
+            <AddIcon />
           </button>
-          <button className="btn btn-dark" title="Logout" onClick={handleLogout}>
-            <FiLogOut />
+          <button 
+              className="btn btn-danger logout-btn" 
+              onClick={handleLogout}><FiLogOut />
           </button>
         </div>
+        <FindPeoplePane open={showFindPeoplePane} setOpen={setShowFindPeoplePane} />
+        <NotificationsPane 
+          open={showNotificationsPane} 
+          setOpen={setShowNotificationsPane}
+          notifications={notifications}
+          setNotifications={setNotifications} 
+        />
 
     </div>
   );

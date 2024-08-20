@@ -10,7 +10,7 @@ function ChatContainer({activeChannel, messages, setMessages}) {
     const [newMessage, setNewMessage] = useState('');
     
     const [hasMoreMessages, setHasMoreMessages] = useState(true);
-    const [nextPage, setNextPage] = useState(0);
+    //const [nextPage, setNextPage] = useState(0);
     
     const formatTimestamp = (timestamp) => {
         const date = new Date(timestamp);
@@ -85,7 +85,9 @@ function ChatContainer({activeChannel, messages, setMessages}) {
             .get(
                 `${API_URL}/api/channels/${activeChannel.id}/messages`,
                 {
-                    params: { page: nextPage },
+                    params: { 
+                        lastLoadedTimestamp: messages[messages.length - 1].timestamp
+                    },
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 }
             )
@@ -95,7 +97,7 @@ function ChatContainer({activeChannel, messages, setMessages}) {
     
             if (res.data.page.totalPages > res.data.page.number + 1) {
                 setHasMoreMessages(true);
-                setNextPage(prev => prev + 1);
+                //setNextPage(prev => prev + 1);
             } else {
                 setHasMoreMessages(false);
             }
@@ -107,12 +109,12 @@ function ChatContainer({activeChannel, messages, setMessages}) {
     
     useEffect(() => {
         if (activeChannel) {
-            setNextPage(0);
+            //setNextPage(0);
             setMessages([]);
             axios.get(
                 `${API_URL}/api/channels/${activeChannel.id}/messages`,
                 {
-                    params: { page: 0 },
+                    params: { getFirst: "true" },
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 }
             )
@@ -123,7 +125,7 @@ function ChatContainer({activeChannel, messages, setMessages}) {
                 
                 if (res.data.page.totalPages > res.data.page.number + 1) {
                     setHasMoreMessages(true);
-                    setNextPage(prev => prev + 1);
+                    //setNextPage(prev => prev + 1);
                 } else {
                     setHasMoreMessages(false);
                 }
@@ -133,15 +135,23 @@ function ChatContainer({activeChannel, messages, setMessages}) {
             });
         }
     }, [activeChannel, setMessages]);
-    
+
     
     return (
         <div className="chat-container border">
         {activeChannel ? (
         <>
+            <div className="chat-header d-flex justify-content-between align-items-center">
             <h2>{activeChannel.name}</h2>
+            <div className="ml-auto d-flex align-items-center">
+                <button 
+                    className="btn btn-dark settings-btn" 
+                    style={{ marginRight: '0.2em' }}>Settings
+                </button>
+            </div>
+            </div>
 
-                <div className="chat-messages" id='scrollable-chat-container'>
+                <div className="chat-messages mt-1" id='scrollable-chat-container'>
                 <InfiniteScroll
                     dataLength={messages.length || 0}
                     style={
@@ -152,11 +162,14 @@ function ChatContainer({activeChannel, messages, setMessages}) {
                     }
                     next={fetchMoreData}
                     hasMore={hasMoreMessages}
-                    loader={<h4>Loading...</h4>}
+                    loader={<p className='no-messages'>Getting more messages...</p>}
                     inverse={true}
                     scrollableTarget="scrollable-chat-container"
                 >
-                    {renderedMessages || <p className="no-messages">No messages yet. Start the conversation!</p>}
+                    {
+                        renderedMessages || 
+                        <p className="no-messages">No messages yet. Start the conversation!</p>
+                    }
                 </InfiniteScroll>
                 </div>
                 

@@ -1,6 +1,7 @@
 package com.santi.messagesp2p.repository;
 
 import com.santi.messagesp2p.model.Message;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,5 +14,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
   List<Message> findByChannelId(Long channelId);
 
   Page<Message> findByChannelId(Long channelId, Pageable pageable);
+
+  Page<Message> findByChannelIdAndTimestampLessThan(Long channelId, LocalDateTime lastLoadedTimestamp, Pageable pageable);
 
 }
