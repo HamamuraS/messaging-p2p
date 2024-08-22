@@ -9,7 +9,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AddIcon from '@mui/icons-material/Add';
 import getPendingsNotifications from '../utils/getPendingNotifications';
 
-const UserBar = ({notifications, setNotifications}) => {
+const UserBar = ({notifications, setNotifications, setChannels}) => {
   const username = localStorage.getItem('username');
   const navigate = useNavigate();
   const [showFindPeoplePane, setShowFindPeoplePane] = useState(false);
@@ -91,6 +91,7 @@ const UserBar = ({notifications, setNotifications}) => {
           setOpen={setShowNotificationsPane}
           notifications={notifications}
           setNotifications={setNotifications} 
+          setChannels={setChannels}
         />
 
     </div>

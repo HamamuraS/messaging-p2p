@@ -3,10 +3,10 @@ import { API_URL } from "../utils/config";
 
 function ChannelsList({ 
     activeChannel,
-    setActiveChannel
+    setActiveChannel,
+    channels,
+    setChannels
 }) {
-    
-    const [channels, setChannels] = useState([]);
 
     
     const handleChannelSelect = (channel) => {
@@ -45,7 +45,7 @@ function ChannelsList({
     
     return (
           
-        <div className="list-group-flush border-bottom scrollarea" style={{width: '380px'}}>
+        <div className="list-group-flush border-bottom scrollarea">
           {channels.map((channel) => (
             <div
               key={channel.id}

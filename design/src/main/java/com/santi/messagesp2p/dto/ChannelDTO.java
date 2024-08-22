@@ -14,6 +14,7 @@ public class ChannelDTO {
   private String name;
   private String type;
   private Set<Long> users = new HashSet<>();
+  private String messageType = "NEW_CHANNEL";
 
   public ChannelDTO() {
   }

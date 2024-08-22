@@ -1,8 +1,10 @@
 package com.santi.messagesp2p.service;
 
 import com.santi.messagesp2p.controller.WebSocketHandler;
+import com.santi.messagesp2p.dto.ChannelDTO;
 import com.santi.messagesp2p.dto.FriendshipRequestDTO;
 import com.santi.messagesp2p.exception.NotFoundException;
+import com.santi.messagesp2p.model.Channel;
 import com.santi.messagesp2p.model.User;
 import com.santi.messagesp2p.model.notification.FriendshipRequest;
 import com.santi.messagesp2p.repository.FriendshipRequestRepository;
@@ -23,6 +25,7 @@ public class FriendshipRequestService {
   private final FriendshipRequestRepository friendshipRequestRepository;
   private final UserRepository userRepository;
   private final WebSocketHandler webSocketHandler;
+  private final ChannelService channelService;
 
   Logger logger = LoggerFactory.getLogger(FriendshipRequestService.class);
 
@@ -30,11 +33,12 @@ public class FriendshipRequestService {
   public FriendshipRequestService(
       FriendshipRequestRepository friendshipRequestRepository,
       UserRepository userRepository,
-      WebSocketHandler webSocketHandler
-  ) {
+      WebSocketHandler webSocketHandler,
+      ChannelService channelService) {
     this.friendshipRequestRepository = friendshipRequestRepository;
     this.userRepository = userRepository;
     this.webSocketHandler = webSocketHandler;
+    this.channelService = channelService;
   }
 
 
@@ -65,8 +69,41 @@ public class FriendshipRequestService {
       webSocketHandler.sendMessage(receiverId, JsonConverter.messageToJson(request.toDTO()));
     }
     catch (Exception e) {
-      logger.info("Error sending message to user {}", receiverId);
+      logger.info("Error notifying new friendship request {}", receiverId);
     }
+  }
+
+  // receiver uses this method, therefore sender will be added to ChannelDTO
+  @Transactional
+  public Channel setFriendshipRequestState(Long friendshipRequestId, Boolean accepted) {
+    logger.info("Setting friendship request state to {}", accepted);
+    FriendshipRequest request = friendshipRequestRepository.findById(friendshipRequestId)
+        .orElseThrow(() -> new NotFoundException("Friendship request not found"));
+
+    request.setAccepted(accepted);
+
+    if (!accepted) {
+      logger.info("Friendship request {} rejected", friendshipRequestId);
+      return null;
+    }
+
+    ChannelDTO newChannel = new ChannelDTO();
+    newChannel.setType("CONTACT");
+    newChannel.getUsers().add(request.getSender().getId());
+
+    Channel createdChannel = channelService.initializeChannel(newChannel);
+
+    // notify active websockets
+    try {
+      User notifiedUser = request.getSender();
+      String message = JsonConverter.messageToJson(createdChannel.toDTO(notifiedUser));
+      webSocketHandler.sendMessage(notifiedUser.getId(), message);
+    }
+    catch (Exception e) {
+      logger.info("Error notifying new contact to {}", request.getSender().getId());
+    }
+
+    return createdChannel;
   }
 
   public Set<FriendshipRequestDTO> getFriendshipRequests(Long receiverId) {

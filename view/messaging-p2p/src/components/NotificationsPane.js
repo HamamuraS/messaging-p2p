@@ -1,11 +1,27 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, Card, CardContent, Typography, Button, Grid, IconButton, Box } from "@mui/material";
 import { CheckCircle, Cancel, Close } from '@mui/icons-material';
+import updateFriendshipRequestWithAccepted from '../utils/updateFriendshipRequestWithAccepted';
+import NotificationSnackbar from '../utils/successSnackbar';
 
-const NotificationsPane = ({ open, setOpen, notifications }) => {
+const NotificationsPane = ({ open, setOpen, notifications, setNotifications, setChannels }) => {
 
+  const [snackBarOpen, setSnackBarOpen] = React.useState(false);
+  
   const handleClose = () => {
     setOpen(false);
+  };
+  
+  const processNotificationWithValue = async (accepted, requestId) => {
+    
+    const createdChannel = await updateFriendshipRequestWithAccepted(accepted, requestId);
+    
+    if (createdChannel && accepted) {
+      setSnackBarOpen(true);
+      setChannels((channels) => [...channels, createdChannel]);
+    }
+    setNotifications(notifications.filter((n) => n.id !== requestId));
+    
   };
 
   const displayNotifications = () => {
@@ -33,7 +49,7 @@ const NotificationsPane = ({ open, setOpen, notifications }) => {
                   variant="outlined"
                   color="primary"
                   startIcon={<CheckCircle />}
-                  onClick={() => {/* Funcionalidad para aceptar */}}
+                  onClick={() => {processNotificationWithValue(true, notification.id);}}
                 >
                   Accept
                 </Button>
@@ -43,7 +59,7 @@ const NotificationsPane = ({ open, setOpen, notifications }) => {
                   variant="outlined"
                   color="secondary"
                   startIcon={<Cancel />}
-                  onClick={() => {/* Funcionalidad para rechazar */}}
+                  onClick={() => {processNotificationWithValue(false, notification.id);}}
                 >
                   Reject
                 </Button>
@@ -67,10 +83,16 @@ const NotificationsPane = ({ open, setOpen, notifications }) => {
         {notifications.length > 0 ? (
           displayNotifications()
         ) : (
-          <Typography align="center" color="textSecondary">No notifications available</Typography>
+          <Typography align="center" color="textSecondary">No notifications yet!</Typography>
         )}
       </DialogContent>
+      <NotificationSnackbar
+        open={snackBarOpen}
+        setOpen={setSnackBarOpen}
+        message="Hurray, you have a new friend!"
+      />
     </Dialog>
+    
   );
 };
 

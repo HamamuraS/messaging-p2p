@@ -65,6 +65,7 @@ const FindPeoplePane = ({ open, setOpen }) => {
               setInputValue(e.target.value);
               setErrorMessage('');
             }}
+            autoComplete='off'
           />
           {errorMessage && (
             <p style={{ color: 'red', fontSize:'0.8em'}}>{errorMessage}</p>

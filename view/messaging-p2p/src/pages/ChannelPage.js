@@ -8,6 +8,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import friendshipRequest from "../utils/socket_reception/friendshipRequest";
 import handleTextMessage from "../utils/socket_reception/handleTextMessage";
+import { IconButton } from '@mui/material';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 function ChannelPage() {
   const [activeChannel, setActiveChannel] = useState(null);
@@ -16,6 +18,12 @@ function ChannelPage() {
   const userId = localStorage.getItem('id');
   const [isConnected, setIsConnected] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [channels, setChannels] = useState([]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  const toggleSidebar = useCallback(() => {
+    setIsCollapsed((prev) => !prev);
+  } , []);
   
   // ======= syncronization protection ======
   const connectingRef = useRef(false);
@@ -63,8 +71,12 @@ function ChannelPage() {
           case "FRIENDSHIP_REQUEST":
             friendshipRequest(data, setNotifications);
             break;
+          case "NEW_CHANNEL":
+            setChannels((prevChannels) => [...prevChannels, data]);
+            break;
           default:
             console.error('Unknown message type:', data.messageType);
+            break;
         }
         
       });
@@ -121,16 +133,29 @@ function ChannelPage() {
   }, [isConnected, displayReconnection]);
 
   return (
-    <div className="channels-page">
-    <div className="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary">
-      <UserBar 
-        notifications={notifications}
-        setNotifications={setNotifications}
-      />
-      <ChannelsList
-        activeChannel={activeChannel}
-        setActiveChannel={setActiveChannel}
-      />
+    <div className="channels-page d-flex">
+    <div 
+      className={`d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary ${isCollapsed?'collapsed':''}`}
+      style={{ transition: 'width 0.3s', width: isCollapsed ? '2em' : '26.5em' }}
+    >
+    <IconButton onClick={toggleSidebar} style={{ alignSelf: 'flex-end' }}>
+      {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
+    </IconButton>
+        {!isCollapsed && (
+          <>
+            <UserBar 
+              notifications={notifications}
+              setNotifications={setNotifications}
+              setChannels={setChannels}
+            />
+            <ChannelsList
+              activeChannel={activeChannel}
+              setActiveChannel={setActiveChannel}
+              channels={channels}
+              setChannels={setChannels}
+            />
+          </>
+        )}
     </div>
       <ChatContainer
         activeChannel={activeChannel}
