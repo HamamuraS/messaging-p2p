@@ -1,5 +1,5 @@
-const server_ip = '192.168.1.102'; // Puedes eliminar esto si ya no lo necesitas
-
+//const server_ip = '192.168.1.102'; // Puedes eliminar esto si ya no lo necesitas
+const server_ip = 'messaging-p2p-production.up.railway.app';
 const dev = {
   API_URL: `http://${server_ip}:8080`,
   WS_URL: `ws://${server_ip}:8080`,
